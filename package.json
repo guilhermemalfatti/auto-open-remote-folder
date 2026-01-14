@@ -1,0 +1,62 @@
+{
+  "name": "auto-open-remote-folder",
+  "displayName": "Auto Open Remote Folder",
+  "description": "Automatically opens a configured folder when connecting to a remote machine via SSH",
+  "version": "1.0.0",
+  "engines": {
+    "vscode": "^1.74.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onCommand:autoOpenRemoteFolder.openConfiguredFolder"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "configuration": {
+      "title": "Auto Open Remote Folder",
+      "properties": {
+        "autoOpenRemoteFolder.defaultPath": {
+          "type": "string",
+          "default": "/local/src",
+          "description": "Default folder path to open when connecting to a remote machine. Use {project} placeholder for project name detection.",
+          "markdownDescription": "Default folder path to open when connecting to a remote machine. Use `{project}` placeholder for project name detection (e.g., `/local/src/{project}`)."
+        },
+        "autoOpenRemoteFolder.projectMapping": {
+          "type": "object",
+          "default": {},
+          "description": "Map remote host names to specific project folders. Format: {\"hostname\": \"/path/to/project\"}",
+          "markdownDescription": "Map remote host names to specific project folders. Format: `{\"hostname\": \"/path/to/project\"}`"
+        }
+      }
+    },
+    "commands": [
+      {
+        "command": "autoOpenRemoteFolder.openConfiguredFolder",
+        "title": "Open Configured Remote Folder",
+        "category": "Auto Open Remote Folder"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "autoOpenRemoteFolder.openConfiguredFolder",
+        "key": "ctrl+shift+o",
+        "mac": "cmd+shift+o",
+        "when": "remoteName != undefined"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/node": "^18.0.0",
+    "@types/vscode": "^1.74.0",
+    "typescript": "^4.9.0"
+  }
+}
+
+
