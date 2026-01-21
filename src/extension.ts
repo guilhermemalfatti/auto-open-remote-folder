@@ -189,32 +189,13 @@ export function activate(context: vscode.ExtensionContext) {
                 );
 
                 if (!alreadyOpen) {
-                    // If we're in a default folder or have only one folder, replace the workspace
-                    // This ensures the workspace name matches the folder name (like native "Open Folder")
-                    if (currentFolders && currentFolders.length === 1) {
-                        const currentPath = currentFolders[0].uri.fsPath;
-                        if (isDefaultFolder(currentPath)) {
-                            // Replace the current workspace folder - this will set workspace name to folder name
-                            await vscode.commands.executeCommand('vscode.openFolder', folderUri, false);
-                            vscode.window.showInformationMessage(`Opened folder: ${targetPath}`);
-                            return;
-                        }
-                    }
+                    // Always open in a new window (true = new window, false = current window)
+                    await vscode.commands.executeCommand('vscode.openFolder', folderUri, true);
                     
-                    // If no folders are open, open as new workspace (sets workspace name to folder name)
-                    if (!currentFolders || currentFolders.length === 0) {
-                        await vscode.commands.executeCommand('vscode.openFolder', folderUri, false);
-                        vscode.window.showInformationMessage(`Opened folder: ${targetPath}`);
-                        return;
-                    }
-                    
-                    // Otherwise, add as a new workspace folder (multi-root workspace)
-                    vscode.workspace.updateWorkspaceFolders(
-                        vscode.workspace.workspaceFolders?.length || 0,
-                        null,
-                        { uri: folderUri }
-                    );
-                    vscode.window.showInformationMessage(`Added folder: ${targetPath}`);
+                    // Wait a bit for the new window to initialize, then close current window
+                    setTimeout(async () => {
+                        await vscode.commands.executeCommand('workbench.action.closeWindow');
+                    }, 500);
                 } else {
                     vscode.window.showInformationMessage(`Folder ${targetPath} is already open.`);
                 }

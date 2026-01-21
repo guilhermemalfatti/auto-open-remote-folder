@@ -3,6 +3,12 @@
   "displayName": "Auto Open Remote Folder",
   "description": "Opens a configured folder on local or remote machines via command or keyboard shortcut",
   "version": "1.0.0",
+  "repository": "https://github.com/guilhermemalfatti/auto-open-remote-folder#",
+  "author": {
+    "name": "Guilherme Malfatti",
+    "url": "https://github.com/guilhermemalfatti"
+  },
+  "publisher": "guilhermemalfatti",
   "engines": {
     "vscode": "^1.74.0"
   },
