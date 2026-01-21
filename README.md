@@ -1,18 +1,18 @@
 # Auto Open Remote Folder
 
-A VS Code extension that automatically opens a configured folder when connecting to a remote machine via SSH.
+A VS Code extension that opens a configured folder on local or remote machines via command or keyboard shortcut.
 
 ## Problem
 
-When connecting to a remote machine via SSH in VS Code, it often defaults to opening `/root` or `/home`, but your source code typically lives in a different location like `/local/src/<project>`. This extension automates opening your preferred folder.
+When working in VS Code, whether locally or on a remote machine via SSH, you often need to navigate to a specific project folder. When connecting to a remote machine, VS Code often defaults to opening `/root` or `/home`, but your source code typically lives in a different location. This extension automates opening your preferred folder on both local and remote machines.
 
 ## Features
 
-- Opens a configured folder via command or keyboard shortcut (no automatic activation)
-- **Git repository validation** - Only opens folders that are git repositories
+- Opens a configured folder via command or keyboard shortcut (works on both local and remote machines)
 - Supports project name detection using `{project}` placeholder
-- Host-specific folder mappings
-- Keyboard shortcut: `Ctrl+Shift+O` (or `Cmd+Shift+O` on Mac) when connected remotely
+- Host-specific folder mappings (works for both remote SSH hostnames and local machine hostnames)
+- OS-aware path handling (supports `~` for home directory, environment variables, and cross-platform paths)
+- Keyboard shortcut: `Ctrl+Shift+O` (or `Cmd+Shift+O` on Mac) - works everywhere
 
 ## Installation
 
@@ -22,8 +22,8 @@ When connecting to a remote machine via SSH in VS Code, it often defaults to ope
 2. Open the extension folder in VS Code
 3. Run `npm install` to install dependencies
 4. Press `F5` to open a new Extension Development Host window
-5. In the new window, connect to your remote machine via SSH
-6. The extension will automatically open your configured folder
+5. Test the extension by pressing `Ctrl+Shift+O` (or `Cmd+Shift+O` on Mac) or using the Command Palette
+6. For remote testing, connect to your remote machine via SSH in the Extension Development Host window
 
 ### Packaging for Distribution
 
@@ -38,20 +38,12 @@ Open VS Code settings (File > Preferences > Settings) and search for "Auto Open 
 ### Settings
 
 - **`autoOpenRemoteFolder.defaultPath`** (default: `/local/src`)
-  - Default folder path to open when connecting to a remote machine
+  - Default folder path to open (works on both local and remote machines)
   - Use `{project}` placeholder to automatically detect project name
-  - Example: `/local/src/{project}` will open `/local/src/my-project` if your workspace folder is named `my-project`
-
-- **`autoOpenRemoteFolder.projectMapping`** (default: `{}`)
-  - Map specific remote hostnames to project folders
-  - Format: `{"hostname": "/path/to/project"}`
-  - Example:
-    ```json
-    {
-      "my-server": "/local/src/digital-dashboard-frontend-v2",
-      "dev-server": "/local/src/my-dev-project"
-    }
-    ```
+  - Supports `~` for home directory (e.g., `~/projects/{project}`)
+  - Supports environment variables like `$HOME` (e.g., `$HOME/projects/{project}`)
+  - Example: `/local/src/{project}` will open `/local/src/my-project` if there's exactly one folder in `/local/src`
+  - Example (local): `~/projects/{project}` will open `~/projects/my-project` on your local machine
 
 ## Usage Examples
 
@@ -59,43 +51,29 @@ Open VS Code settings (File > Preferences > Settings) and search for "Auto Open 
 Set `defaultPath` to `/local/src/my-project` to always open that folder.
 
 ### Example 2: Project Name Detection
-Set `defaultPath` to `/local/src/{project}`. If your workspace folder is named `digital-dashboard-frontend-v2`, it will open `/local/src/digital-dashboard-frontend-v2`.
-
-### Example 3: Host-Specific Mapping
-```json
-{
-  "autoOpenRemoteFolder.projectMapping": {
-    "server1": "/local/src/project-a",
-    "server2": "/local/src/project-b"
-  }
-}
-```
+Set `defaultPath` to `/local/src/{project}`. The extension will automatically detect the single folder in `/local/src` and use its name. For example, if `/local/src` contains only `project01`, it will open `/local/src/project01`.
 
 ## Usage
 
 ### Keyboard Shortcut
-Press `Ctrl+Shift+O` (or `Cmd+Shift+O` on Mac) when connected to a remote machine to open the configured folder.
+Press `Ctrl+Shift+O` (or `Cmd+Shift+O` on Mac) to open the configured folder. Works on both local and remote machines.
 
 ### Command Palette
 1. Open the Command Palette (`Ctrl+Shift+P` / `Cmd+Shift+P`)
-2. Run the command: `Open Configured Remote Folder`
-
-### Git Repository Requirement
-**Important**: The extension will only open folders that are git repositories. If the configured folder is not a git repository, you'll see an error message.
+2. Run the command: `Open Configured Folder`
 
 ## How It Works
 
 1. The extension activates when you trigger the command (via keyboard shortcut or command palette)
-2. It resolves the target folder path based on your configuration
+2. It resolves the target folder path based on your configuration (supports `~`, environment variables, and `{project}` placeholder)
 3. It checks if the folder exists
-4. **It verifies the folder is a git repository** (checks for `.git` directory/file)
-5. If valid, it opens the folder (replaces `/root` or `/home` if currently open, otherwise adds as workspace folder)
-6. Shows an error message if the folder is not a git repository
+4. If valid, it opens the folder (replaces default folders like `/root`, `/home`, or user home directory if currently open, otherwise adds as workspace folder)
+5. Shows an error message if the folder doesn't exist
 
 ## Requirements
 
 - VS Code 1.74.0 or higher
-- Remote SSH extension (for remote connections)
+- Remote SSH extension (only needed for remote connections)
 
 ## Development
 

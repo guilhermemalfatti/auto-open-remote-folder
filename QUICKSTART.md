@@ -16,15 +16,15 @@
 3. **Test the extension:**
    - Open the extension folder in VS Code
    - Press `F5` to launch Extension Development Host
-   - In the new window, connect to your remote machine via SSH
    - Press `Ctrl+Shift+O` (or `Cmd+Shift+O` on Mac) to trigger the folder opening
-   - Or use Command Palette → "Open Configured Remote Folder"
+   - Or use Command Palette → "Open Configured Folder"
+   - For remote testing, connect to your remote machine via SSH in the Extension Development Host window
 
 ## Configuration
 
-### Option 1: Simple Path (Recommended for your use case)
+### Option 1: Simple Path
 
-Since your projects are in `/local/src/<project>`, set:
+For remote machines (e.g., projects in `/local/src/<project>`):
 
 ```json
 {
@@ -40,16 +40,19 @@ Or use the `{project}` placeholder:
 }
 ```
 
-### Option 2: Host-Specific Mapping
-
-If you connect to different servers with different projects:
+For local machines, you can use home directory shortcuts:
 
 ```json
 {
-  "autoOpenRemoteFolder.projectMapping": {
-    "server1": "/local/src/digital-dashboard-frontend-v2",
-    "server2": "/local/src/another-project"
-  }
+  "autoOpenRemoteFolder.defaultPath": "~/projects/{project}"
+}
+```
+
+Or with environment variables:
+
+```json
+{
+  "autoOpenRemoteFolder.defaultPath": "$HOME/projects/{project}"
 }
 ```
 
@@ -68,7 +71,6 @@ Or edit `settings.json` directly:
 }
 ```
 
-**Note**: The folder must be a git repository (contain a `.git` directory). The extension will show an error if it's not.
 
 ## Packaging for Installation
 
@@ -86,15 +88,15 @@ code --install-extension auto-open-remote-folder-1.0.0.vsix
 
 ## Usage
 
-After connecting to your remote machine:
+The extension works on both local and remote machines:
 - Press `Ctrl+Shift+O` (or `Cmd+Shift+O` on Mac) to open the configured folder
-- Or use Command Palette (`Ctrl+Shift+P`) → "Open Configured Remote Folder"
+- Or use Command Palette (`Ctrl+Shift+P`) → "Open Configured Folder"
 
 ## Troubleshooting
 
-- **Extension doesn't activate**: Make sure you're connected via Remote SSH and trigger the command manually
-- **Wrong folder opens**: Check your `defaultPath` setting
-- **Folder doesn't exist**: Verify the path exists on the remote machine
-- **"Not a git repository" error**: The folder must be a git repository (contain a `.git` directory). Initialize it with `git init` if needed.
-- **Keyboard shortcut doesn't work**: Make sure you're connected to a remote machine (shortcut only works when `remoteName != undefined`)
+- **Extension doesn't activate**: Trigger the command manually via Command Palette or keyboard shortcut
+- **Wrong folder opens**: Check your `defaultPath` setting and verify it's correct for your machine (local vs remote)
+- **Folder doesn't exist**: Verify the path exists on the current machine (local or remote)
+- **Project name not detected**: Make sure your workspace folder is not a default folder (like `/root`, `/home`, or your home directory). The extension detects project names from workspace folder names.
+- **Path resolution issues**: On local machines, use `~` for home directory or `$HOME` environment variable. On Windows, use proper Windows paths (e.g., `C:\\Users\\YourName\\projects`).
 

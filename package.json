@@ -1,7 +1,7 @@
 {
   "name": "auto-open-remote-folder",
   "displayName": "Auto Open Remote Folder",
-  "description": "Automatically opens a configured folder when connecting to a remote machine via SSH",
+  "description": "Opens a configured folder on local or remote machines via command or keyboard shortcut",
   "version": "1.0.0",
   "engines": {
     "vscode": "^1.74.0"
@@ -10,7 +10,8 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:autoOpenRemoteFolder.openConfiguredFolder"
+    "onCommand:autoOpenRemoteFolder.openConfiguredFolder",
+    "onView:autoOpenRemoteFolder.folderOpenerView"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -20,21 +21,15 @@
         "autoOpenRemoteFolder.defaultPath": {
           "type": "string",
           "default": "/local/src",
-          "description": "Default folder path to open when connecting to a remote machine. Use {project} placeholder for project name detection.",
-          "markdownDescription": "Default folder path to open when connecting to a remote machine. Use `{project}` placeholder for project name detection (e.g., `/local/src/{project}`)."
-        },
-        "autoOpenRemoteFolder.projectMapping": {
-          "type": "object",
-          "default": {},
-          "description": "Map remote host names to specific project folders. Format: {\"hostname\": \"/path/to/project\"}",
-          "markdownDescription": "Map remote host names to specific project folders. Format: `{\"hostname\": \"/path/to/project\"}`"
+          "description": "Default folder path to open. Supports {project} placeholder, ~ for home directory, and environment variables. Works on both local and remote machines.",
+          "markdownDescription": "Default folder path to open. Supports `{project}` placeholder for project name detection (e.g., `/local/src/{project}`), `~` for home directory, and environment variables like `$HOME`. Works on both local and remote machines."
         }
       }
     },
     "commands": [
       {
         "command": "autoOpenRemoteFolder.openConfiguredFolder",
-        "title": "Open Configured Remote Folder",
+        "title": "Open Configured Folder",
         "category": "Auto Open Remote Folder"
       }
     ],
@@ -42,10 +37,28 @@
       {
         "command": "autoOpenRemoteFolder.openConfiguredFolder",
         "key": "ctrl+shift+o",
-        "mac": "cmd+shift+o",
-        "when": "remoteName != undefined"
+        "mac": "cmd+shift+o"
       }
-    ]
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "autoOpenRemoteFolder",
+          "title": "Folder Opener",
+          "icon": "$(folder-opened)"
+        }
+      ]
+    },
+    "views": {
+      "autoOpenRemoteFolder": [
+        {
+          "id": "autoOpenRemoteFolder.folderOpenerView",
+          "name": "Open Folder",
+          "type": "webview",
+          "when": "true"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
